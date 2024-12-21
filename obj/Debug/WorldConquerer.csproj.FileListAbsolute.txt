@@ -1,0 +1,11 @@
+C:\Users\Rik\Documents\GitHub\WorldConquerer\bin\Debug\WorldConquerer.exe.config
+C:\Users\Rik\Documents\GitHub\WorldConquerer\bin\Debug\WorldConquerer.exe
+C:\Users\Rik\Documents\GitHub\WorldConquerer\bin\Debug\WorldConquerer.pdb
+C:\Users\Rik\Documents\GitHub\WorldConquerer\bin\Debug\System.Drawing.Common.dll
+C:\Users\Rik\Documents\GitHub\WorldConquerer\bin\Debug\System.Drawing.Common.pdb
+C:\Users\Rik\Documents\GitHub\WorldConquerer\bin\Debug\System.Drawing.Common.xml
+C:\Users\Rik\Documents\GitHub\WorldConquerer\obj\Debug\WorldConquerer.csproj.AssemblyReference.cache
+C:\Users\Rik\Documents\GitHub\WorldConquerer\obj\Debug\WorldConquerer.csproj.CoreCompileInputs.cache
+C:\Users\Rik\Documents\GitHub\WorldConquerer\obj\Debug\WorldCon.A699EC36.Up2Date
+C:\Users\Rik\Documents\GitHub\WorldConquerer\obj\Debug\WorldConquerer.exe
+C:\Users\Rik\Documents\GitHub\WorldConquerer\obj\Debug\WorldConquerer.pdb
