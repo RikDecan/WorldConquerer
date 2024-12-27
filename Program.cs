@@ -4,7 +4,6 @@
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
             World world = new World();
             var w=world.BuildWorld2(100,100,0.60);
             //var w = world.BuildWorld1(100, 100);
@@ -37,13 +36,6 @@
             //}
             //BitmapWriter bmw = new BitmapWriter();
             //bmw.DrawWorld(ww);
-
-
-
-
-
-
-
 
         }
     }
