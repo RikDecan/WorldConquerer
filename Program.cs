@@ -1,4 +1,8 @@
-﻿namespace ConsoleAppSquareMaster
+﻿using SharpCompress.Writers;
+using System.Drawing.Imaging;
+using System.IO;
+
+namespace ConsoleAppSquareMaster
 {
     internal class Program
     {
@@ -52,6 +56,42 @@
             mongoService.SaveWorld("Worlds", "TestWorld1", "CoverageAlgorithm", 100, 100, 0.6, generatedWorld);
 
             Console.WriteLine("World saved to MongoDB!");
+
+
+             static int[,] ConvertBoolArrayToIntArray(bool[,] boolArray)
+            {
+                int rows = boolArray.GetLength(0);
+                int cols = boolArray.GetLength(1);
+                int[,] intArray = new int[rows, cols];
+
+                for (int i = 0; i < rows; i++)
+                {
+                    for (int j = 0; j < cols; j++)
+                    {
+                        intArray[i, j] = boolArray[i, j] ? 1 : 0;
+                    }
+                }
+                return intArray;
+            }
+
+
+
+            try
+            {
+                // Converteer bool[,] naar int[,] als nodig
+                int[,] intWorld = ConvertBoolArrayToIntArray(generatedWorld);
+
+                BitmapWriter bmw = new BitmapWriter();
+                bmw.DrawWorld(intWorld);
+
+                Console.WriteLine("Wereld getekend en opgeslagen!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Fout bij opslaan van wereld: {ex.Message}");
+            }
+
+
         }
     }
 }
