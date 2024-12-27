@@ -38,7 +38,6 @@ namespace ConsoleAppSquareMaster
                         }
                     }
                 }
-            //var x = Path.Combine(path, woodID.ToString() + "_escapeRoutes.jpg");
             bm.Save(Path.Combine(path, "world.jpg"), ImageFormat.Jpeg);
         }
     }
