@@ -12,7 +12,7 @@ namespace ConsoleAppSquareMaster
     internal class BitmapWriter
     {
         private const int drawingFactor = 8;
-        private string path=@"c:\tmp\world";
+        private string path=@"c:\tmp1\world";
         public void DrawWorld(int[,] world)
         {
             Color[] cvalues = new Color[] {Color.Green, Color.Red, Color.Yellow, Color.Blue, Color.Cyan, Color.GreenYellow,Color.Gold,Color.Ivory,Color.NavajoWhite };
@@ -38,7 +38,7 @@ namespace ConsoleAppSquareMaster
                         }
                     }
                 }
-            bm.Save(Path.Combine(path, "world.jpg"), ImageFormat.Jpeg);
+            bm.Save(Path.Combine(path, "world2.jpg"), ImageFormat.Jpeg);
         }
     }
 }

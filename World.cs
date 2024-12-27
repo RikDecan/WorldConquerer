@@ -8,7 +8,7 @@ namespace ConsoleAppSquareMaster
 {
     public class World
     {
-        private Random random = new Random();
+        private Random random = new Random(10);
         private int maxRandom = 10;
         private int chanceExtra = 6;
         private int chanceLess = 3;
