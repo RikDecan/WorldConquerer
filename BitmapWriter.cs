@@ -12,7 +12,7 @@ namespace ConsoleAppSquareMaster
     internal class BitmapWriter
     {
         private const int drawingFactor = 8;
-        private string path=@"C:\tmp1\world";
+        private string path=@"c:\tmp\world";
         public void DrawWorld(int[,] world)
         {
             Color[] cvalues = new Color[] {Color.Green, Color.Red, Color.Yellow, Color.Blue, Color.Cyan, Color.GreenYellow,Color.Gold,Color.Ivory,Color.NavajoWhite };
@@ -39,19 +39,7 @@ namespace ConsoleAppSquareMaster
                     }
                 }
             //var x = Path.Combine(path, woodID.ToString() + "_escapeRoutes.jpg");
-           
-            
-            bm.Save(Path.Combine(path, "world.png"), ImageFormat.Png);
-
-            try
-            {
-                DrawWorld(world);
-                Console.WriteLine("Wereld getekend en opgeslagen!");
-            }
-            catch (Exception)
-            {
-                throw new Exception ("Wereld opslaan niet gelukt");
-            }
+            bm.Save(Path.Combine(path, "world.jpg"), ImageFormat.Jpeg);
         }
     }
 }

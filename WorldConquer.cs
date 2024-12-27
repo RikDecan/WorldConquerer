@@ -98,8 +98,6 @@ namespace ConsoleAppSquareMaster
             }
             return worldempires;
         }
-
-
         /*
          * nEmpires indicates the number of empires who will try to conquer the world
          * it is a turned based algorithme, every turn each empire will try to expand
@@ -139,8 +137,6 @@ namespace ConsoleAppSquareMaster
             }
             return worldempires;
         }
-
-
         /* e is the id of the empire
          * index is the selected location within the empire
          * empire contains the locations owned by the empire
@@ -166,8 +162,6 @@ namespace ConsoleAppSquareMaster
                 worldempires[n[x].Item1, n[x].Item2] = e;
             }
         }
-
-
         /*
          * nEmpires indicates the number of empires who will try to conquer the world
          * it is a turned based algorithme, every turn each empire will try to expand

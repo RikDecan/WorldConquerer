@@ -1,31 +1,24 @@
-﻿using SharpCompress.Writers;
-using System.Drawing.Imaging;
-using System.IO;
-
-namespace ConsoleAppSquareMaster
+﻿namespace ConsoleAppSquareMaster
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            //Console.WriteLine("Hello, World!");
-            //World world = new World();
-            //var w=world.BuildWorld2(100,100,0.60);
-            ////var w = world.BuildWorld1(100, 100);
-            //for (int i = 0; i < w.GetLength(1); i++)
-            //{
-            //    for (int j = 0; j < w.GetLength(0); j++)
-            //    {
-            //        char ch;
-            //        if (w[j, i]) ch = '*'; else ch = ' ';
-            //        Console.Write(ch);
-            //    }
-            //    Console.WriteLine();
-            //}
-            //WorldConquer wq = new WorldConquer(w);
-
-
-
+            Console.WriteLine("Hello, World!");
+            World world = new World();
+            var w=world.BuildWorld2(100,100,0.60);
+            //var w = world.BuildWorld1(100, 100);
+            for (int i = 0; i < w.GetLength(1); i++)
+            {
+                for (int j = 0; j < w.GetLength(0); j++)
+                {
+                    char ch;
+                    if (w[j, i]) ch = '*'; else ch = ' ';
+                    Console.Write(ch);
+                }
+                Console.WriteLine();
+            }
+            WorldConquer wq = new WorldConquer(w);
             //var ww = wq.Conquer3(5, 25000);
             //for (int i = 0; i < ww.GetLength(1); i++)
             //{
@@ -44,54 +37,6 @@ namespace ConsoleAppSquareMaster
             //}
             //BitmapWriter bmw = new BitmapWriter();
             //bmw.DrawWorld(ww);
-
-            // Setup MongoDB Service
-            var mongoService = new MongoDbService("mongodb://localhost:27017", "WorldDatabase");
-
-            // Generate World
-            World world = new World();
-            bool[,] generatedWorld = world.BuildWorld2(100, 100, 0.6);
-
-            // Save World to MongoDB
-            mongoService.SaveWorld("Worlds", "TestWorld1", "CoverageAlgorithm", 100, 100, 0.6, generatedWorld);
-
-            Console.WriteLine("World saved to MongoDB!");
-
-
-             static int[,] ConvertBoolArrayToIntArray(bool[,] boolArray)
-            {
-                int rows = boolArray.GetLength(0);
-                int cols = boolArray.GetLength(1);
-                int[,] intArray = new int[rows, cols];
-
-                for (int i = 0; i < rows; i++)
-                {
-                    for (int j = 0; j < cols; j++)
-                    {
-                        intArray[i, j] = boolArray[i, j] ? 1 : 0;
-                    }
-                }
-                return intArray;
-            }
-
-
-
-            try
-            {
-                // Converteer bool[,] naar int[,] als nodig
-                int[,] intWorld = ConvertBoolArrayToIntArray(generatedWorld);
-
-                BitmapWriter bmw = new BitmapWriter();
-                bmw.DrawWorld(intWorld);
-
-                Console.WriteLine("Wereld getekend en opgeslagen!");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Fout bij opslaan van wereld: {ex.Message}");
-            }
-
-
         }
     }
 }
