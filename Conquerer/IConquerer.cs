@@ -26,6 +26,9 @@ namespace ConsoleAppSquareMaster.Conquerer
             return worldempires;
         }
 
+        
+
+
         protected void InitializeWorld(bool[,] world)
         {
             maxx = world.GetLength(0);
