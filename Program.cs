@@ -29,10 +29,6 @@ namespace ConsoleAppSquareMaster
 
 
 
-
-
-
-
             var strategyNames = new string[]
             {
                 "Random Conquest",
