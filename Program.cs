@@ -26,6 +26,8 @@ namespace ConsoleAppSquareMaster
                 new Conquerer3()
             };
 
+
+
             
 
             var strategyNames = new string[]
