@@ -44,7 +44,12 @@ namespace ConsoleAppSquareMaster
             var database = client.GetDatabase("WorldDatabase");
             _worlds = database.GetCollection<WorldModel>("Worlds");
             _conquestResults = database.GetCollection<ConquestResult>("ConquestResults");
+            //doe maar verder
+
+
         }
+
+
 
         public async Task SaveWorldAsync(string name, string generationType, bool[,] worldData, int width, int height, double coverage)
         {
@@ -108,4 +113,6 @@ namespace ConsoleAppSquareMaster
             }
         }
     }
+
+
 }

@@ -68,6 +68,18 @@ namespace ConsoleAppSquareMaster
                 //Console.WriteLine("\nPress any key to continue to next strategy...");
                 //Console.ReadKey();
             }
+
+
+            var mongoService = new MongoDbService("mongodb://localhost:27017", "WorldDatabase");
+
+            // Generate World
+            RandomWorldGenerator world = new RandomWorldGenerator();
+            bool[,] generatedWorld = world.GenerateWorld(100, 100, 0.6);
+
+            // Save World to MongoDB
+            mongoService.SaveWorld("Worlds", "TestWorld1", "CoverageAlgorithm", 100, 100, 0.6, generatedWorld);
+
+            Console.WriteLine("World saved to MongoDB!");
         }
 
         static void DisplayWorld(bool[,] world)
@@ -156,6 +168,8 @@ namespace ConsoleAppSquareMaster
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
+
+
 
 
     }
