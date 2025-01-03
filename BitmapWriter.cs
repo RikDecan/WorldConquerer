@@ -38,7 +38,7 @@ namespace ConsoleAppSquareMaster
                         }
                     }
                 }
-            bm.Save(Path.Combine(path, "world2.jpg"), ImageFormat.Jpeg);
+            bm.Save(Path.Combine(path, "world6.jpg"), ImageFormat.Jpeg);
         }
     }
 }

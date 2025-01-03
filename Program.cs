@@ -1,4 +1,5 @@
 ﻿using ConsoleAppSquareMaster.Conquerer;
+using  ConsoleAppSquareMaster.World;
 
 namespace ConsoleAppSquareMaster
 {
@@ -9,8 +10,12 @@ namespace ConsoleAppSquareMaster
             Console.WriteLine("World Conquest Simulation\n");
 
             // Create world
-            World world = new World();
-            var w = world.BuildWorld2(100, 100, 0.60);
+
+            //World world = new World();
+            //var w = world.BuildWorld2(100, 100, 0.60);
+
+            var worldGenerator = new RandomWorldGenerator();
+            var w = worldGenerator.GenerateWorld(100, 100, 0.60);
 
             // Display the initial world
             Console.WriteLine("Initial World:");
