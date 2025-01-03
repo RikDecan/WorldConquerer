@@ -1,5 +1,7 @@
 ﻿using ConsoleAppSquareMaster.Conquerer;
 using  ConsoleAppSquareMaster.World;
+using MongoDB.Driver;
+
 
 namespace ConsoleAppSquareMaster
 {
@@ -114,6 +116,7 @@ namespace ConsoleAppSquareMaster
                 }
             }
 
+
             // Display statistics
             Console.WriteLine("\nStatistics:");
             Console.WriteLine($"Unconquered territory: {empireCounts[0]} cells ({(empireCounts[0] * 100.0 / totalCells):F2}%)");
@@ -122,6 +125,39 @@ namespace ConsoleAppSquareMaster
                 Console.WriteLine($"Empire {i}: {empireCounts[i]} cells ({(empireCounts[i] * 100.0 / totalCells):F2}%)");
             }
         }
+
+        static async Task AddToMongo(string[] args) // Make Main async
+        {
+            Console.WriteLine("World Conquest Simulation\n");
+
+            try
+            {
+                // Test MongoDB connection first
+                var worldService = new WorldService();
+
+                // Generate and save worlds
+                var worldGenerator = new RandomWorldGenerator();
+                await worldGenerator.GenerateAndSaveWorldsAsync(worldService, 3); // Save 3 test worlds
+                Console.WriteLine("Successfully saved worlds to MongoDB!");
+
+                // Continue with your existing simulation...
+                var w = worldGenerator.GenerateWorld(100, 100, 0.60);
+
+                // Rest of your existing code...
+
+            }
+            catch (MongoDB.Driver.MongoConnectionException ex)
+            {
+                Console.WriteLine($"Failed to connect to MongoDB: {ex.Message}");
+                Console.WriteLine("Please ensure MongoDB is running on localhost:27017");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+        }
+
+
     }
 
 }

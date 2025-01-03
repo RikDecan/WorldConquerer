@@ -71,6 +71,9 @@ namespace ConsoleAppSquareMaster.Conquerer
             return indexes[random.Next(indexes.Count)];
         }
 
+
+
+
         private int EmptyNeighbours(int empire, int x, int y)
         {
             int n = 0;

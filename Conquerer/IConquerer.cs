@@ -27,7 +27,8 @@ namespace ConsoleAppSquareMaster.Conquerer
         }
 
         
-
+        //dit is de Interface voor 1 instantie , kijk maar gerust verder
+        //ksnap het ni kga nog ff kijken oke wacht he
 
         protected void InitializeWorld(bool[,] world)
         {
