@@ -58,8 +58,8 @@ namespace ConsoleAppSquareMaster
                 // Calculate and display statistics
                 DisplayStatistics(result, numberOfEmpires);
 
-                Console.WriteLine("\nPress any key to continue to next strategy...");
-                Console.ReadKey();
+                //Console.WriteLine("\nPress any key to continue to next strategy...");
+                //Console.ReadKey();
             }
         }
 
