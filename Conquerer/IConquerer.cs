@@ -8,7 +8,7 @@ namespace ConsoleAppSquareMaster.Conquerer
 {
     public interface IConquerer
     {
-        int[,] Conquer(bool[,] world, int nEmpires, int turns);
+        int[,] Conquer(bool[,] world, int empireId, int numberOfTurns);
     }
 
     public abstract class BaseConquerer : IConquerer
@@ -26,9 +26,7 @@ namespace ConsoleAppSquareMaster.Conquerer
             return worldempires;
         }
 
-        
-        //dit is de Interface voor 1 instantie , kijk maar gerust verder
-        //ksnap het ni kga nog ff kijken oke wacht he
+    
 
         protected void InitializeWorld(bool[,] world)
         {

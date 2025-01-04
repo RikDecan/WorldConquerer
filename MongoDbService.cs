@@ -1,68 +1,52 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using MongoDB.Bson;
 
-namespace ConsoleAppSquareMaster
+public class MongoDbService
 {
-    internal class MongoDbService
+    private readonly IMongoDatabase _database;
+
+    public MongoDbService(string connectionString, string databaseName)
     {
-        private readonly IMongoDatabase _database;
+        var client = new MongoClient(connectionString);
+        _database = client.GetDatabase(databaseName);
+    }
 
-        public MongoDbService(string connectionString, string databaseName)
+    public async Task ClearWorldsCollectionAsync(string collectionName)
+    {
+        var collection = _database.GetCollection<BsonDocument>(collectionName);
+        await collection.DeleteManyAsync(Builders<BsonDocument>.Filter.Empty);
+    }
+
+    public async Task SaveWorldAsync(string collectionName, string planetName, string generationType,
+        int width, int height, double coverage, bool[,] world)
+    {
+        var collection = _database.GetCollection<BsonDocument>(collectionName);
+
+        var document = new BsonDocument
         {
-            var client = new MongoClient(connectionString);
-            _database = client.GetDatabase(databaseName);
-        }
+            { "planetName", planetName },
+            { "generationType", generationType },
+            { "width", width },
+            { "height", height },
+            { "coverage", coverage },
+            { "world", ConvertWorldToBsonArray(world) }
+        };
 
-        public IMongoCollection<BsonDocument> GetCollection(string collectionName)
+        await collection.InsertOneAsync(document);
+    }
+
+    private BsonArray ConvertWorldToBsonArray(bool[,] world)
+    {
+        var array = new BsonArray();
+        for (int i = 0; i < world.GetLength(0); i++)
         {
-            return _database.GetCollection<BsonDocument>(collectionName);
-        }
-
-        public void SaveWorld(string collectionName, string name, string algorithm, int maxX, int maxY, double coverage, bool[,] worldData)
-        {
-            var collection = GetCollection(collectionName);
-
-            var worldDocument = new BsonDocument
+            var row = new BsonArray();
+            for (int j = 0; j < world.GetLength(1); j++)
             {
-                { "name", name },
-                { "algorithm", algorithm },
-                { "dimensions", new BsonDocument { { "x", maxX }, { "y", maxY } } },
-                { "coverage", coverage },
-                { "worldData", ConvertWorldToBsonArray(worldData) }
-            };
-
-            collection.InsertOne(worldDocument);
-        }
-
-        private BsonArray ConvertWorldToBsonArray(bool[,] worldData)
-        {
-            var array = new BsonArray();
-            for (int i = 0; i < worldData.GetLength(0); i++)
-            {
-                var row = new BsonArray();
-                for (int j = 0; j < worldData.GetLength(1); j++)
-                {
-                    row.Add(worldData[i, j]);
-                }
-                array.Add(row);
+                row.Add(world[i, j]);
             }
-            return array;
+            array.Add(row);
         }
-
-        public void ClearWorldsCollection(string collectionName)
-        {
-            var collection = _database.GetCollection<BsonDocument>(collectionName);
-            collection.DeleteMany(Builders<BsonDocument>.Filter.Empty);
-            Console.WriteLine($"Collection '{collectionName}' has been cleared.");
-        }
-
-
-
-
+        return array;
     }
 }
