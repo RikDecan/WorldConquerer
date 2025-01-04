@@ -54,6 +54,13 @@ namespace ConsoleAppSquareMaster
             return array;
         }
 
+        public void ClearWorldsCollection(string collectionName)
+        {
+            var collection = _database.GetCollection<BsonDocument>(collectionName);
+            collection.DeleteMany(Builders<BsonDocument>.Filter.Empty);
+            Console.WriteLine($"Collection '{collectionName}' has been cleared.");
+        }
+
 
 
 

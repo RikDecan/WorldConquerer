@@ -48,7 +48,7 @@ namespace ConsoleAppSquareMaster.Conquerer
                                 worldempires[x, y - 1] = e;
                                 empires[e].Add((x, y - 1));
                             }
-                            break;
+                        break;
                     }
                 }
             }

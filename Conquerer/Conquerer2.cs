@@ -48,7 +48,7 @@ namespace ConsoleAppSquareMaster.Conquerer
                                 worldempires[x, y - 1] = e;
                                 empires[e].Add((x, y - 1));
                             }
-                            break;
+                        break;
                     }
                 }
             }
@@ -70,9 +70,6 @@ namespace ConsoleAppSquareMaster.Conquerer
             }
             return indexes[random.Next(indexes.Count)];
         }
-
-
-
 
         private int EmptyNeighbours(int empire, int x, int y)
         {

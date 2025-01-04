@@ -16,22 +16,46 @@ namespace ConsoleAppSquareMaster
             //World world = new World();
             //var w = world.BuildWorld2(100, 100, 0.60);
 
-            var worldGenerator = new RandomWorldGenerator();
-            var w = worldGenerator.GenerateWorld(100, 100, 0.60);
 
-            // Display the initial world
-            Console.WriteLine("Initial World:");
-            DisplayWorld(w);
-            Console.WriteLine("\nPress any key to start conquering...");
-            Console.ReadKey();
+            string[] planets = { "Tatooine", "Scarif", "Endor", "Ilum", "Alderaan", "Coruscant", "Mandalore", "Naboo", "Mustafar", "Crait" };
 
-            // Test all three strategies on the same world
-            var strategies = new IConquerer[]
+            Random random = new Random();
+
+            var mongoService = new MongoDbService("mongodb://localhost:27017", "WorldDatabase");
+
+            mongoService.ClearWorldsCollection("Worlds");
+
+            bool[,] w = null;
+
+
+            for (int i = 0; i < 10; i++)
             {
+
+                var strategies = new IConquerer[]
+                {
                 new Conquerer1(),
                 new Conquerer2(),
                 new Conquerer3()
-            };
+                };
+
+
+
+                int width = random.Next(30, 101);
+                int height = random.Next(30, 101);
+                double coverage = 0.15 + (random.NextDouble() * (0.95 - 0.15));
+
+                var worldGenerator = new RandomWorldGenerator();
+                w = worldGenerator.GenerateWorld(width, height, coverage);
+
+                mongoService.SaveWorld("Worlds", planets[i], "Random", width, height, coverage, w);
+                Console.WriteLine("World saved to MongoDB!");
+
+                Console.WriteLine("Initial World:");
+                DisplayWorld(w);
+
+
+            }
+
 
 
 
@@ -43,7 +67,7 @@ namespace ConsoleAppSquareMaster
             };
 
             // Parameters for conquest
-            const int numberOfEmpires = 5;
+            const int numberOfEmpires = 1;
             const int numberOfTurns = 25000;
 
             // Execute each strategy and show results
@@ -69,17 +93,8 @@ namespace ConsoleAppSquareMaster
                 //Console.ReadKey();
             }
 
+     
 
-            var mongoService = new MongoDbService("mongodb://localhost:27017", "WorldDatabase");
-
-            // Generate World
-            RandomWorldGenerator world = new RandomWorldGenerator();
-            bool[,] generatedWorld = world.GenerateWorld(50, 75, 0.8);
-
-            // Save World to MongoDB
-            mongoService.SaveWorld("Worlds", "Alderaan", "Column", 50, 75, 0.8, generatedWorld);
-
-            Console.WriteLine("World saved to MongoDB!");
         }
 
         static void DisplayWorld(bool[,] world)
