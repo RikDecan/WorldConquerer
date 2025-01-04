@@ -10,45 +10,27 @@ namespace ConsoleAppSquareMaster.Conquerer
     {
         protected override void ExecuteConquerStrategy(int nEmpires, int turns)
         {
-            for (int i = 0; i < turns; i++)
+            for (int t = 0; t < turns; t++)
             {
                 for (int e = 1; e <= nEmpires; e++)
                 {
-                    var index = random.Next(empires[e].Count);
-                    var direction = random.Next(4);
-                    var x = empires[e][index].Item1;
-                    var y = empires[e][index].Item2;
+                    if (!empires.ContainsKey(e) || empires[e].Count == 0)
+                        continue;
 
-                    switch (direction)
+                    // Kies een willekeurige cel van het rijk
+                    var index = random.Next(empires[e].Count);
+                    var (x, y) = empires[e][index];
+
+                    // Kies een willekeurige richting
+                    int direction = random.Next(4);
+                    int newX = x + (direction == 0 ? 1 : direction == 1 ? -1 : 0);
+                    int newY = y + (direction == 2 ? 1 : direction == 3 ? -1 : 0);
+
+                    // Controleer en breid uit
+                    if (IsValidPosition(newX, newY) && worldempires[newX, newY] == 0)
                     {
-                        case 0:
-                            if (x < maxx - 1 && worldempires[x + 1, y] == 0)
-                            {
-                                worldempires[x + 1, y] = e;
-                                empires[e].Add((x + 1, y));
-                            }
-                            break;
-                        case 1:
-                            if (x > 0 && worldempires[x - 1, y] == 0)
-                            {
-                                worldempires[x - 1, y] = e;
-                                empires[e].Add((x - 1, y));
-                            }
-                            break;
-                        case 2:
-                            if (y < maxy - 1 && worldempires[x, y + 1] == 0)
-                            {
-                                worldempires[x, y + 1] = e;
-                                empires[e].Add((x, y + 1));
-                            }
-                            break;
-                        case 3:
-                            if (y > 0 && worldempires[x, y - 1] == 0)
-                            {
-                                worldempires[x, y - 1] = e;
-                                empires[e].Add((x, y - 1));
-                            }
-                        break;
+                        worldempires[newX, newY] = e;
+                        empires[e].Add((newX, newY));
                     }
                 }
             }

@@ -10,75 +10,66 @@ namespace ConsoleAppSquareMaster.Conquerer
     {
         protected override void ExecuteConquerStrategy(int nEmpires, int turns)
         {
-            for (int i = 0; i < turns; i++)
+            for (int t = 0; t < turns; t++)
             {
                 for (int e = 1; e <= nEmpires; e++)
                 {
-                    var index = FindWithMostEmptyNeighbours(e, empires[e]);
-                    var direction = random.Next(4);
-                    var x = empires[e][index].Item1;
-                    var y = empires[e][index].Item2;
+                    if (!empires.ContainsKey(e) || empires[e].Count == 0)
+                        continue;
 
-                    switch (direction)
+                    // Vind de cel met de meeste lege buren
+                    var maxEmpty = -1;
+                    var candidates = new List<(int, int)>();
+
+                    foreach (var (x, y) in empires[e])
                     {
-                        case 0:
-                            if (x < maxx - 1 && worldempires[x + 1, y] == 0)
-                            {
-                                worldempires[x + 1, y] = e;
-                                empires[e].Add((x + 1, y));
-                            }
-                            break;
-                        case 1:
-                            if (x > 0 && worldempires[x - 1, y] == 0)
-                            {
-                                worldempires[x - 1, y] = e;
-                                empires[e].Add((x - 1, y));
-                            }
-                            break;
-                        case 2:
-                            if (y < maxy - 1 && worldempires[x, y + 1] == 0)
-                            {
-                                worldempires[x, y + 1] = e;
-                                empires[e].Add((x, y + 1));
-                            }
-                            break;
-                        case 3:
-                            if (y > 0 && worldempires[x, y - 1] == 0)
-                            {
-                                worldempires[x, y - 1] = e;
-                                empires[e].Add((x, y - 1));
-                            }
-                        break;
+                        int emptyCount = CountEmptyNeighbours(x, y);
+
+                        if (emptyCount > maxEmpty)
+                        {
+                            maxEmpty = emptyCount;
+                            candidates.Clear();
+                            candidates.Add((x, y));
+                        }
+                        else if (emptyCount == maxEmpty)
+                        {
+                            candidates.Add((x, y));
+                        }
+                    }
+
+                    if (candidates.Count > 0)
+                    {
+                        // Kies een willekeurige kandidaat
+                        var (x, y) = candidates[random.Next(candidates.Count)];
+                        TryExpandEmpire(e, x, y);
                     }
                 }
             }
         }
 
-        private int FindWithMostEmptyNeighbours(int e, List<(int, int)> empire)
+        private int CountEmptyNeighbours(int x, int y)
         {
-            List<int> indexes = new List<int>();
-            int n = 0;
-            for (int i = 0; i < empire.Count; i++)
-            {
-                var calcN = EmptyNeighbours(e, empire[i].Item1, empire[i].Item2);
-                if (calcN >= n)
-                {
-                    indexes.Clear();
-                    n = calcN;
-                    indexes.Add(i);
-                }
-            }
-            return indexes[random.Next(indexes.Count)];
+            int count = 0;
+            if (IsValidPosition(x + 1, y) && worldempires[x + 1, y] == 0) count++;
+            if (IsValidPosition(x - 1, y) && worldempires[x - 1, y] == 0) count++;
+            if (IsValidPosition(x, y + 1) && worldempires[x, y + 1] == 0) count++;
+            if (IsValidPosition(x, y - 1) && worldempires[x, y - 1] == 0) count++;
+            return count;
         }
 
-        private int EmptyNeighbours(int empire, int x, int y)
+        private void TryExpandEmpire(int empireId, int x, int y)
         {
-            int n = 0;
-            if (IsValidPosition(x - 1, y) && worldempires[x - 1, y] == 0) n++;
-            if (IsValidPosition(x + 1, y) && worldempires[x + 1, y] == 0) n++;
-            if (IsValidPosition(x, y - 1) && worldempires[x, y - 1] == 0) n++;
-            if (IsValidPosition(x, y + 1) && worldempires[x, y + 1] == 0) n++;
-            return n;
+            var directions = new[] { (1, 0), (-1, 0), (0, 1), (0, -1) };
+            foreach (var (dx, dy) in directions.OrderBy(_ => random.Next()))
+            {
+                int newX = x + dx, newY = y + dy;
+                if (IsValidPosition(newX, newY) && worldempires[newX, newY] == 0)
+                {
+                    worldempires[newX, newY] = empireId;
+                    empires[empireId].Add((newX, newY));
+                    break;
+                }
+            }
         }
     }
 }

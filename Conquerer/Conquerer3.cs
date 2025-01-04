@@ -10,42 +10,42 @@ namespace ConsoleAppSquareMaster.Conquerer
     {
         protected override void ExecuteConquerStrategy(int nEmpires, int turns)
         {
-            for (int i = 0; i < turns; i++)
+            for (int t = 0; t < turns; t++)
             {
                 for (int e = 1; e <= nEmpires; e++)
                 {
-                    var index = random.Next(empires[e].Count);
-                    PickEmpty(empires[e], index, e);
+                    if (!empires.ContainsKey(e) || empires[e].Count == 0)
+                        continue;
+
+                    var candidates = new List<(int, int)>();
+
+                    // Verzamel alle mogelijke uitbreidingskandidaten
+                    foreach (var (x, y) in empires[e])
+                    {
+                        AddCandidate(x + 1, y, candidates);
+                        AddCandidate(x - 1, y, candidates);
+                        AddCandidate(x, y + 1, candidates);
+                        AddCandidate(x, y - 1, candidates);
+                    }
+
+                    // Kies een willekeurige kandidaat en breid uit
+                    if (candidates.Count > 0)
+                    {
+                        var (newX, newY) = candidates[random.Next(candidates.Count)];
+                        worldempires[newX, newY] = e;
+                        empires[e].Add((newX, newY));
+                    }
                 }
             }
         }
 
-        private void PickEmpty(List<(int, int)> empire, int index, int e)
+        private void AddCandidate(int x, int y, List<(int, int)> candidates)
         {
-            List<(int, int)> n = new List<(int, int)>();
-
-            if (IsValidPosition(empire[index].Item1 - 1, empire[index].Item2)
-                && worldempires[empire[index].Item1 - 1, empire[index].Item2] == 0)
-                n.Add((empire[index].Item1 - 1, empire[index].Item2));
-
-            if (IsValidPosition(empire[index].Item1 + 1, empire[index].Item2)
-                && worldempires[empire[index].Item1 + 1, empire[index].Item2] == 0)
-                n.Add((empire[index].Item1 + 1, empire[index].Item2));
-
-            if (IsValidPosition(empire[index].Item1, empire[index].Item2 - 1)
-                && worldempires[empire[index].Item1, empire[index].Item2 - 1] == 0)
-                n.Add((empire[index].Item1, empire[index].Item2 - 1));
-
-            if (IsValidPosition(empire[index].Item1, empire[index].Item2 + 1)
-                && worldempires[empire[index].Item1, empire[index].Item2 + 1] == 0)
-                n.Add((empire[index].Item1, empire[index].Item2 + 1));
-
-            if (n.Count > 0)
+            if (IsValidPosition(x, y) && worldempires[x, y] == 0)
             {
-                var pos = n[random.Next(n.Count)];
-                empire.Add(pos);
-                worldempires[pos.Item1, pos.Item2] = e;
+                candidates.Add((x, y));
             }
         }
     }
+
 }
