@@ -16,17 +16,19 @@ namespace ConsoleAppSquareMaster
             var mongoService = new MongoDbService("mongodb://localhost:27017", "WorldDatabase");
             mongoService.ClearWorldsCollection("Worlds");
 
-            for (int i = 0; i < 10; i++) // 10 werelden simuleren
+            for (int worldIndex = 0; worldIndex < 10; worldIndex++)
             {
-                // Genereer een wereld
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\n-{planets[worldIndex]}-");
+                Console.ForegroundColor = ConsoleColor.Gray;  // Reset to default color
+
                 int width = random.Next(30, 101);
                 int height = random.Next(30, 101);
                 double coverage = 0.15 + (random.NextDouble() * (0.95 - 0.15));
                 var worldGenerator = new RandomWorldGenerator();
                 bool[,] world = worldGenerator.GenerateWorld(width, height, coverage);
 
-                // Genereer 4-5 rijken
-                int numberOfEmpires = random.Next(4, 6);
+                int numberOfEmpires = 8;    //random.Next(4, 6);
                 var conquerStrategies = new List<IConquerer>
                 {
                     new Conquerer1(),
@@ -34,77 +36,35 @@ namespace ConsoleAppSquareMaster
                     new Conquerer3()
                 };
 
-                // Koppel een willekeurige strategie aan elk rijk
                 var assignedStrategies = new List<IConquerer>();
                 for (int e = 0; e < numberOfEmpires; e++)
                 {
                     assignedStrategies.Add(conquerStrategies[random.Next(conquerStrategies.Count)]);
                 }
 
-                mongoService.SaveWorld("Worlds", planets[i], "Random", width, height, coverage, world);
-                Console.WriteLine($"World {planets[i]} saved to MongoDB!");
-
-                Console.WriteLine("Initial World:");
-                DisplayWorld(world);
-
-                const int numberOfTurns = 25000;
+                const int numberOfTurns = 12500;
                 var result = new int[width, height];
 
-                // Voer veroveringen uit
                 for (int empireId = 1; empireId <= numberOfEmpires; empireId++)
                 {
-                    Console.WriteLine($"\nExecuting strategy for Empire {empireId}: {assignedStrategies[empireId - 1].GetType().Name}");
-
-                    // Voer de strategie uit voor dit rijk
+                    Console.WriteLine($"Executing strategy for Empire {empireId}: {assignedStrategies[empireId - 1].GetType().Name}");
                     result = assignedStrategies[empireId - 1].Conquer(world, empireId, numberOfTurns);
-
-                    // Toon tussenresultaat
-                    Console.WriteLine($"\nResult for Empire {empireId}:");
-                    DisplayConqueredWorld(result);
                 }
 
-                // Save visualisatie
                 var bmw = new BitmapWriter();
                 bmw.DrawWorld(result);
 
-                // Bereken statistieken
                 DisplayStatistics(result, numberOfEmpires);
-            }
-        }
 
-        static void DisplayWorld(bool[,] world)
-        {
-            for (int i = 0; i < world.GetLength(1); i++)
-            {
-                for (int j = 0; j < world.GetLength(0); j++)
-                {
-                    Console.Write(world[j, i] ? "*" : " ");
-                }
-                Console.WriteLine();
-            }
-        }
-
-        static void DisplayConqueredWorld(int[,] world)
-        {
-            for (int i = 0; i < world.GetLength(1); i++)
-            {
-                for (int j = 0; j < world.GetLength(0); j++)
-                {
-                    switch (world[j, i])
-                    {
-                        case -1: Console.Write(" "); break;
-                        case 0: Console.Write("."); break;
-                        default: Console.Write(world[j, i]); break;
-                    }
-                }
-                Console.WriteLine();
+                mongoService.SaveWorld("Worlds", planets[worldIndex], "Random", width, height, coverage, world);
+                Console.WriteLine($"World {planets[worldIndex]} saved to MongoDB!");
             }
         }
 
         static void DisplayStatistics(int[,] world, int numberOfEmpires)
         {
             var totalCells = world.GetLength(0) * world.GetLength(1);
-            var empireCounts = new int[numberOfEmpires + 1]; // +1 voor onbezet gebied (0)
+            var empireCounts = new int[numberOfEmpires + 1];
 
             for (int i = 0; i < world.GetLength(0); i++)
             {
@@ -117,7 +77,7 @@ namespace ConsoleAppSquareMaster
                 }
             }
 
-            Console.WriteLine("\nStatistics:");
+            Console.WriteLine("Statistics:");
             Console.WriteLine($"Unconquered territory: {empireCounts[0]} cells ({(empireCounts[0] * 100.0 / totalCells):F2}%)");
             for (int i = 1; i <= numberOfEmpires; i++)
             {
