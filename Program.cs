@@ -74,10 +74,10 @@ namespace ConsoleAppSquareMaster
 
             // Generate World
             RandomWorldGenerator world = new RandomWorldGenerator();
-            bool[,] generatedWorld = world.GenerateWorld(100, 100, 0.6);
+            bool[,] generatedWorld = world.GenerateWorld(50, 75, 0.8);
 
             // Save World to MongoDB
-            mongoService.SaveWorld("Worlds", "TestWorld1", "CoverageAlgorithm", 100, 100, 0.6, generatedWorld);
+            mongoService.SaveWorld("Worlds", "Alderaan", "Column", 50, 75, 0.8, generatedWorld);
 
             Console.WriteLine("World saved to MongoDB!");
         }
@@ -137,40 +137,6 @@ namespace ConsoleAppSquareMaster
                 Console.WriteLine($"Empire {i}: {empireCounts[i]} cells ({(empireCounts[i] * 100.0 / totalCells):F2}%)");
             }
         }
-
-        static async Task AddToMongo(string[] args) // Make Main async
-        {
-            Console.WriteLine("World Conquest Simulation\n");
-
-            try
-            {
-                // Test MongoDB connection first
-                var worldService = new WorldService();
-
-                // Generate and save worlds
-                var worldGenerator = new RandomWorldGenerator();
-                await worldGenerator.GenerateAndSaveWorldsAsync(worldService, 3); // Save 3 test worlds
-                Console.WriteLine("Successfully saved worlds to MongoDB!");
-
-                // Continue with your existing simulation...
-                var w = worldGenerator.GenerateWorld(100, 100, 0.60);
-
-                // Rest of your existing code...
-
-            }
-            catch (MongoDB.Driver.MongoConnectionException ex)
-            {
-                Console.WriteLine($"Failed to connect to MongoDB: {ex.Message}");
-                Console.WriteLine("Please ensure MongoDB is running on localhost:27017");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-            }
-        }
-
-
-
 
     }
 
