@@ -78,7 +78,7 @@ namespace ConsoleAppSquareMaster
             await Task.Run(() => bmw.DrawWorld(result));
 
 
-            // await DisplayStatisticsAsync(result, numberOfEmpires);
+             await DisplayStatisticsAsync(result, numberOfEmpires);
 
             await mongoService.SaveWorldAsync("Worlds", planetName, "Random", width, height, coverage, world);
             Console.WriteLine($"World {planetName} saved to MongoDB!");
@@ -86,33 +86,35 @@ namespace ConsoleAppSquareMaster
 
 
 
-        //static async Task DisplayStatisticsAsync(int[,] world, int numberOfEmpires)
-        //{
-        //    var stats = await Task.Run(() =>
-        //    {
-        //        var totalCells = world.GetLength(0) * world.GetLength(1);
-        //        var empireCounts = new int[numberOfEmpires + 1];
 
-        //        for (int i = 0; i < world.GetLength(0); i++)
-        //        {
-        //            for (int j = 0; j < world.GetLength(1); j++)
-        //            {
-        //                if (world[i, j] >= 0)
-        //                {
-        //                    empireCounts[world[i, j]]++;
-        //                }
-        //            }
-        //        }
 
-        //        return (totalCells, empireCounts);
-        //    });
+        static async Task DisplayStatisticsAsync(int[,] world, int numberOfEmpires)
+        {
+            var stats = await Task.Run(() =>
+            {
+                var totalCells = world.GetLength(0) * world.GetLength(1);
+                var empireCounts = new int[numberOfEmpires + 1];
 
-        //    Console.WriteLine("Statistics:");
-        //    Console.WriteLine($"Unconquered territory: {stats.empireCounts[0]} cells ({(stats.empireCounts[0] * 100.0 / stats.totalCells):F2}%)");
-        //    for (int i = 1; i <= numberOfEmpires; i++)
-        //    {
-        //        Console.WriteLine($"Empire {i}: {stats.empireCounts[i]} cells ({(stats.empireCounts[i] * 100.0 / stats.totalCells):F2}%)");
-        //    }
-        //}
+                for (int i = 0; i < world.GetLength(0); i++)
+                {
+                    for (int j = 0; j < world.GetLength(1); j++)
+                    {
+                        if (world[i, j] >= 0)
+                        {
+                            empireCounts[world[i, j]]++;
+                        }
+                    }
+                }
+
+                return (totalCells, empireCounts);
+            });
+
+            Console.WriteLine("Statistics:");
+            Console.WriteLine($"Unconquered territory: {stats.empireCounts[0]} cells ({(stats.empireCounts[0] * 100.0 / stats.totalCells):F2}%)");
+            for (int i = 1; i <= numberOfEmpires; i++)
+            {
+                Console.WriteLine($"Empire {i}: {stats.empireCounts[i]} cells ({(stats.empireCounts[i] * 100.0 / stats.totalCells):F2}%)");
+            }
+        }
     }
 }
