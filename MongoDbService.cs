@@ -49,4 +49,21 @@ public class MongoDbService
         }
         return array;
     }
+
+    public async Task SaveStatsAsync(string collectionName, string planetName, int simulationNumber, int totalCells, double[] percentConquered)
+    {
+        var collection = _database.GetCollection<BsonDocument>(collectionName);
+
+        var document = new BsonDocument
+    {
+        { "planetName", planetName },
+        { "simulationNumber", simulationNumber },
+        { "totalCells", totalCells },
+        { "percentConquered", new BsonArray(percentConquered.Select(p => new BsonDecimal128((decimal)p))) }
+    };
+
+        await collection.InsertOneAsync(document);
+    }
+
+
 }
