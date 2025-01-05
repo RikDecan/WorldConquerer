@@ -35,6 +35,22 @@ public class MongoDbService
         await collection.InsertOneAsync(document);
     }
 
+    public async Task SaveStatsWithAverageAsync(string collectionName, string planetName, int simulationNumber, double totalCells, double[] percentConquered, Dictionary<string, double> averageConquered)
+    {
+        var stats = new BsonDocument
+    {
+        { "Planet", planetName },
+        { "SimulationNumber", simulationNumber },
+        { "TotalCells", totalCells },
+        { "PercentConquered", new BsonArray(percentConquered) },
+        { "AverageConquered", new BsonDocument(averageConquered.Select(kvp => new BsonElement(kvp.Key, kvp.Value))) }
+    };
+
+        var collection = _database.GetCollection<BsonDocument>(collectionName);
+        await collection.InsertOneAsync(stats);
+    }
+
+
     private BsonArray ConvertWorldToBsonArray(bool[,] world)
     {
         var array = new BsonArray();
@@ -50,20 +66,21 @@ public class MongoDbService
         return array;
     }
 
-    public async Task SaveStatsAsync(string collectionName, string planetName, int simulationNumber, int totalCells, double[] percentConquered)
+    public async Task SaveStatsAsync(string collectionName, string planetName, int simulationNumber, double totalCells, double[] percentConquered)
     {
-        var collection = _database.GetCollection<BsonDocument>(collectionName);
-
-        var document = new BsonDocument
+        var stats = new BsonDocument
     {
-        { "planetName", planetName },
-        { "simulationNumber", simulationNumber },
-        { "totalCells", totalCells },
-        { "percentConquered", new BsonArray(percentConquered.Select(p => new BsonDecimal128((decimal)p))) }
+        { "Planet", planetName },
+        { "SimulationNumber", simulationNumber },
+        { "TotalCells", totalCells },
+        { "PercentConquered", new BsonArray(percentConquered)
+            }
     };
 
-        await collection.InsertOneAsync(document);
+        var collection = _database.GetCollection<BsonDocument>(collectionName);
+        await collection.InsertOneAsync(stats);
     }
+
 
 
 }

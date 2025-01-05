@@ -44,14 +44,12 @@ namespace ConsoleAppSquareMaster
             Console.WriteLine($"\n-{planetName} (Simulation {simulationNumber})-");
             Console.ForegroundColor = ConsoleColor.Gray;
 
-            // Generate world
             int width = random.Next(30, 101);
             int height = random.Next(30, 101);
             double coverage = 0.15 + (random.NextDouble() * (0.95 - 0.15));
             var worldGenerator = new RandomWorldGenerator();
             bool[,] world = await Task.Run(() => worldGenerator.GenerateWorld(width, height, coverage));
 
-            // Generate empires and strategies
             int numberOfEmpires = random.Next(7, 9);
             var conquerStrategies = new List<IConquerer>
     {
@@ -69,33 +67,42 @@ namespace ConsoleAppSquareMaster
             const int numberOfTurns = 12500;
             var result = new int[width, height];
 
-            // Execute conquests sequentially for now (to ensure correct empire order)
             for (int empireId = 1; empireId <= numberOfEmpires; empireId++)
             {
                 Console.WriteLine($"Executing strategy for Empire {empireId}: {assignedStrategies[empireId - 1].GetType().Name}");
                 result = await Task.Run(() => assignedStrategies[empireId - 1].Conquer(world, empireId, numberOfTurns));
             }
 
-            // Save visualization asynchronously
             var bmw = new BitmapWriter();
             await Task.Run(() => bmw.DrawWorld(result));
 
-            await DisplayStatisticsAsync(result, numberOfEmpires, planetName, simulationNumber, mongoService);
+            await DisplayStatisticsAsync(world, result, numberOfEmpires, planetName, simulationNumber, mongoService, assignedStrategies);
 
-            // Save to MongoDB with simulation number
             await mongoService.SaveWorldAsync("Worlds", $"{planetName}_Simulation_{simulationNumber}", "Random", width, height, coverage, world);
             Console.WriteLine($"World {planetName} (Simulation {simulationNumber}) saved to MongoDB!");
         }
 
 
-        static async Task DisplayStatisticsAsync(int[,] world, int numberOfEmpires, string planetName, int simulationNumber, MongoDbService mongoService)
+        static async Task DisplayStatisticsAsync(bool[,] blancWorld, int[,] world, int numberOfEmpires, string planetName, int simulationNumber, MongoDbService mongoService, List<IConquerer> assignedStrategies)
         {
-            // Create a list to store the statistics of all simulations for the current world
             var allStatistics = new List<double[]>();
 
             var stats = await Task.Run(() =>
             {
-                var totalCells = world.GetLength(0) * world.GetLength(1);
+
+                double totalCells = 0;
+
+                for (int y = 0; y < blancWorld.GetLength(0); y++)
+                {
+                    for (int x = 0; x < blancWorld.GetLength(1); x++)
+                    {
+                        if (blancWorld[y, x])
+                        {
+                            totalCells++;
+                        }
+                    }
+                }
+
                 var empireCounts = new int[numberOfEmpires + 1];
 
                 for (int i = 0; i < world.GetLength(0); i++)
@@ -109,7 +116,6 @@ namespace ConsoleAppSquareMaster
                     }
                 }
 
-                // Calculate percentages for each empire and the unconquered area
                 var percentConquered = new double[numberOfEmpires + 1];
                 for (int i = 0; i <= numberOfEmpires; i++)
                 {
@@ -119,11 +125,10 @@ namespace ConsoleAppSquareMaster
                 return (totalCells, percentConquered);
             });
 
-            // Store the statistics for the current simulation
             allStatistics.Add(stats.percentConquered);
 
-            // After all simulations are done, calculate averages
-            if (simulationNumber == 3) // Assuming 3 simulations per world
+
+            if (simulationNumber == 3)
             {
                 var averagePercentConquered = new double[numberOfEmpires + 1];
 
@@ -132,61 +137,24 @@ namespace ConsoleAppSquareMaster
                     averagePercentConquered[i] = allStatistics.Average(s => s[i]);
                 }
 
-                // Print the averages
-                Console.WriteLine("\nAverage Statistics (across simulations):");
-                Console.WriteLine($"Unconquered territory: {100.0 - averagePercentConquered[0]:F2}%");
+                var averageConquered = new Dictionary<string, double>();
                 for (int i = 1; i <= numberOfEmpires; i++)
                 {
-                    Console.WriteLine($"Empire {i}: {averagePercentConquered[i]:F2}%");
+                    string conquererName = assignedStrategies[i - 1].GetType().Name;
+                    averageConquered[conquererName] = averagePercentConquered[i];
                 }
+
+                Console.WriteLine("\nAverage Statistics (across simulations):");
+                Console.WriteLine($"Unconquered territory: {100.0 - averagePercentConquered[0]:F2}%");
+                foreach (var kvp in averageConquered)
+                {
+                    Console.WriteLine($"{kvp.Key}: {kvp.Value:F2}%");
+                }
+
+                await mongoService.SaveStatsWithAverageAsync("Stats", planetName, simulationNumber, stats.totalCells, stats.percentConquered, averageConquered);
+                Console.WriteLine("Statistics with averages saved to MongoDB!");
             }
 
-            // Save the statistics to MongoDB for the current simulation
-            await mongoService.SaveStatsAsync("Stats", planetName, simulationNumber, stats.totalCells, stats.percentConquered);
         }
-
-        //static async Task DisplayStatisticsAsync(int[,] world, int numberOfEmpires, string planetName, int simulationNumber, MongoDbService mongoService)
-        //{
-
-        //    //await mongoService.ClearWorldsCollectionAsync("Stats");
-
-        //    var stats = await Task.Run(() =>
-        //    {
-        //        var totalCells = world.GetLength(0) * world.GetLength(1);
-        //        var empireCounts = new int[numberOfEmpires + 1];
-
-        //        for (int i = 0; i < world.GetLength(0); i++)
-        //        {
-        //            for (int j = 0; j < world.GetLength(1); j++)
-        //            {
-        //                if (world[i, j] >= 0)
-        //                {
-        //                    empireCounts[world[i, j]]++;
-        //                }
-        //            }
-        //        }
-
-        //        // Bereken de percentages
-        //        var percentConquered = new double[numberOfEmpires + 1];
-        //        for (int i = 0; i <= numberOfEmpires; i++)
-        //        {
-        //            percentConquered[i] = (empireCounts[i] * 100.0) / totalCells;
-        //        }
-
-        //        return (totalCells, percentConquered);
-        //    });
-
-        //    // Print de statistieken
-        //    Console.WriteLine("Statistics:");
-        //    Console.WriteLine($"Unconquered territory: {stats.percentConquered[0]:F2}%");
-        //    for (int i = 1; i <= numberOfEmpires; i++)
-        //    {
-        //        Console.WriteLine($"Empire {i}: {stats.percentConquered[i]:F2}%");
-        //    }
-
-        //    // Sla de statistieken op in MongoDB
-        //    await mongoService.SaveStatsAsync("Stats", planetName, simulationNumber, stats.totalCells, stats.percentConquered);
-        //}
     }
-
 }
