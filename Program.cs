@@ -88,64 +88,10 @@ namespace ConsoleAppSquareMaster
         }
 
 
-        //static async Task ProcessWorldAsync(string planetName, Random random, MongoDbService mongoService)
-        //{
-        //    Console.ForegroundColor = ConsoleColor.Cyan;
-        //    Console.WriteLine($"\n-{planetName}-");
-        //    Console.ForegroundColor = ConsoleColor.Gray;
-
-        //    // Generate world
-        //    int width = random.Next(30, 101);
-        //    int height = random.Next(30, 101);
-        //    double coverage = 0.15 + (random.NextDouble() * (0.95 - 0.15));
-        //    var worldGenerator = new RandomWorldGenerator();
-        //    bool[,] world = await Task.Run(() => worldGenerator.GenerateWorld(width, height, coverage));
-
-        //    // Generate empires and strategies
-        //    int numberOfEmpires = random.Next(7, 9);
-        //    var conquerStrategies = new List<IConquerer>
-        //    {
-        //        new Conquerer1(),
-        //        new Conquerer2(),
-        //        new Conquerer3()
-        //    };
-
-        //    var assignedStrategies = new List<IConquerer>();
-        //    for (int e = 0; e < numberOfEmpires; e++)
-        //    {
-        //        assignedStrategies.Add(conquerStrategies[random.Next(conquerStrategies.Count)]);
-        //    }
-
-        //    const int numberOfTurns = 12500;
-        //    var result = new int[width, height];
-
-        //    // Execute conquests sequentially for now (to ensure correct empire order)
-
-        //    for (int empireId = 1; empireId <= numberOfEmpires; empireId++)
-        //    {
-        //        Console.WriteLine($"Executing strategy for Empire {empireId}: {assignedStrategies[empireId - 1].GetType().Name}");
-        //        result = await Task.Run(() => assignedStrategies[empireId - 1].Conquer(world, empireId, numberOfTurns));
-        //    }
-
-        //    // Save visualization asynchronously
-        //    var bmw = new BitmapWriter();
-        //    await Task.Run(() => bmw.DrawWorld(result));
-
-
-        //     await DisplayStatisticsAsync(result, numberOfEmpires);
-
-        //    await mongoService.SaveWorldAsync("Worlds", planetName, "Random", width, height, coverage, world);
-        //    Console.WriteLine($"World {planetName} saved to MongoDB!");
-        //}
-
-
-
         static async Task DisplayStatisticsAsync(int[,] world, int numberOfEmpires, string planetName, int simulationNumber, MongoDbService mongoService)
         {
 
-
             //await mongoService.ClearWorldsCollectionAsync("Stats");
-
 
             var stats = await Task.Run(() =>
             {
@@ -185,4 +131,5 @@ namespace ConsoleAppSquareMaster
             await mongoService.SaveStatsAsync("Stats", planetName, simulationNumber, stats.totalCells, stats.percentConquered);
         }
     }
+
 }
