@@ -17,16 +17,13 @@ namespace ConsoleAppSquareMaster.Conquerer
                     if (!empires.ContainsKey(e) || empires[e].Count == 0)
                         continue;
 
-                    // Kies een willekeurige cel van het rijk
                     var index = random.Next(empires[e].Count);
                     var (x, y) = empires[e][index];
 
-                    // Kies een willekeurige richting
                     int direction = random.Next(4);
                     int newX = x + (direction == 0 ? 1 : direction == 1 ? -1 : 0);
                     int newY = y + (direction == 2 ? 1 : direction == 3 ? -1 : 0);
 
-                    // Controleer en breid uit
                     if (IsValidPosition(newX, newY) && worldempires[newX, newY] == 0)
                     {
                         worldempires[newX, newY] = e;

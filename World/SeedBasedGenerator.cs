@@ -24,7 +24,6 @@ namespace ConsoleAppSquareMaster.World
             int currentCoverage = 0;
             var list = new List<(int, int)>();
 
-            // Place initial seeds
             for (int i = 0; i < seedCount; i++)
             {
                 int x = random.Next(width), y = random.Next(height);
@@ -36,7 +35,7 @@ namespace ConsoleAppSquareMaster.World
                 }
             }
 
-            // Grow from seeds
+   
             while (currentCoverage < coverageRequired)
             {
                 int index = random.Next(list.Count);

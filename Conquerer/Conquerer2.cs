@@ -17,7 +17,6 @@ namespace ConsoleAppSquareMaster.Conquerer
                     if (!empires.ContainsKey(e) || empires[e].Count == 0)
                         continue;
 
-                    // Vind de cel met de meeste lege buren
                     var maxEmpty = -1;
                     var candidates = new List<(int, int)>();
 

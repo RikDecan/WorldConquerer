@@ -20,15 +20,15 @@ namespace ConsoleAppSquareMaster
             var mongoService = new MongoDbService("mongodb://localhost:27017", "WorldDatabase");
             await mongoService.ClearWorldsCollectionAsync("Worlds");
 
-            // Process each world 3 times
+
             var worldTasks = new List<Task>();
 
             for (int i = 0; i < planets.Length; i++)
             {
                 for (int simulationNumber = 1; simulationNumber <= 3; simulationNumber++)
                 {
-                    int currentIndex = i; // Capture current index for async operation
-                    int currentSimulation = simulationNumber; // Capture simulation number
+                    int currentIndex = i;
+                    int currentSimulation = simulationNumber; 
                     var worldTask = ProcessWorldAsync(planets[currentIndex], currentSimulation, random, mongoService);
                     worldTasks.Add(worldTask);
                 }

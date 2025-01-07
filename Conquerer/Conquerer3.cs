@@ -19,7 +19,6 @@ namespace ConsoleAppSquareMaster.Conquerer
 
                     var candidates = new List<(int, int)>();
 
-                    // Verzamel alle mogelijke uitbreidingskandidaten
                     foreach (var (x, y) in empires[e])
                     {
                         AddCandidate(x + 1, y, candidates);
@@ -28,7 +27,6 @@ namespace ConsoleAppSquareMaster.Conquerer
                         AddCandidate(x, y - 1, candidates);
                     }
 
-                    // Kies een willekeurige kandidaat en breid uit
                     if (candidates.Count > 0)
                     {
                         var (newX, newY) = candidates[random.Next(candidates.Count)];
